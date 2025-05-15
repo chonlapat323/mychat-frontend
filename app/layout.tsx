@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ReduxProvider } from "@/src/providers/ReduxProvider";
+import { useAuthLoad } from "@/hook/useAuthLoad";
+import AuthLoaderWrapper from "@/src/providers/AuthLoaderWrapper";
 
 export const metadata: Metadata = {
   title: "Mychat App",
@@ -15,7 +17,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ReduxProvider>{children}</ReduxProvider>
+        <ReduxProvider>
+          <AuthLoaderWrapper>{children}</AuthLoaderWrapper>
+        </ReduxProvider>
       </body>
     </html>
   );

@@ -22,7 +22,7 @@ export async function fetchWithAuth<T>(
         credentials: "include",
       });
     } else {
-      window.location.href = "/login";
+      window.location.href = "/signin";
       throw new HttpError("Unauthorized, redirected to signin", 401);
     }
   }

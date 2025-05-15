@@ -597,3 +597,28 @@ layer(base);
   opacity: 0.8;
   cursor: grabbing; /* Changes the cursor to indicate dragging */
 }
+
+
+/* --- Custom Scrollbar --- */
+.scroll-area {
+  scrollbar-gutter: stable overlay;
+}
+.scroll-on-hover::-webkit-scrollbar {
+  width: 0px;
+   background: transparent;
+}
+
+.scroll-on-hover::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scroll-on-hover::-webkit-scrollbar-thumb {
+  background-color: #4b5563;
+  border-radius: 0px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.group:hover .scroll-on-hover::-webkit-scrollbar-thumb {
+  opacity: 0;
+}

@@ -1,8 +1,6 @@
 import { API_URL } from "@/libs/config";
 import { LoginPayload } from "@/types/auth/login-payload";
 import { RegisterPayload } from "@/types/auth/register-playload";
-import { useDispatch } from "react-redux";
-import { clearUser } from "@/store/authSlice";
 
 export const register = async (payload: RegisterPayload) => {
   const res = await fetch(`${API_URL}/register`, {
