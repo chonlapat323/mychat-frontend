@@ -2,9 +2,8 @@ import SignForm from "@/components/auth/SignForm";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "My Shop Admin",
-  description: "My Shop Admin",
-  // other metadata
+  title: "My Chat",
+  description: "My Chat",
 };
 
 export default function SignUp() {

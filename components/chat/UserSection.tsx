@@ -28,7 +28,6 @@ export default function UserSection() {
           </span>
         )}
       </div>
-      {/* 👇 Tooltip Email */}
       <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 text-[10px] text-white bg-gray-800 rounded shadow opacity-0 group-hover:opacity-100 transition pointer-events-none z-10 whitespace-nowrap">
         {user.email}
       </div>

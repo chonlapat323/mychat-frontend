@@ -1,73 +1,54 @@
 "use client";
 
-import { useRooms } from "@/hook/useRooms";
+import { useChatRoom } from "@/hooks/useChatRoom";
 import UserSection from "../chat/UserSection";
-import { useState } from "react";
 import CreateRoomModal from "../modal/CreateRoomModal";
-import { useCreateRoom } from "@/hook/useCreateRoom";
-import { useMessages } from "@/hook/useMessages";
 import MessageBubble from "../chat/MessageBubble";
+import { getUserNameById } from "@/utils/user";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { getUserNameById } from "@/utils/user";
-import { joinRoom, Room } from "@/services/room.service";
-import { User } from "@/types/user";
+import { useRef } from "react";
+import Spinner from "../ui/Spinner";
+import { useLayoutEffect } from "react";
 
 export default function ChatLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [showModal, setShowModal] = useState(false);
-  const [activeRoomId, setActiveRoomId] = useState<string | null>(null);
-  const { messages, loading: loading_message } = useMessages(activeRoomId!);
-  const { rooms, reloadRooms, loading } = useRooms();
-  const [allUsers, setAllUsers] = useState<User[]>([]);
-  const [isMember, setIsMember] = useState<boolean>(false);
-  const [activeRoom, setActiveRoom] = useState<Room | null>(null);
+  const currentUser = useSelector((state: RootState) => state.auth.user);
 
   const {
-    createRoom,
-    loading: creating,
-    error,
-  } = useCreateRoom(() => {
-    reloadRooms();
-    setShowModal(false);
-  });
+    showModal,
+    setShowModal,
+    rooms,
+    loadingRooms,
+    activeRoom,
+    activeRoomId,
+    isMember,
+    allUsers,
+    messages,
+    messageInput,
+    setMessageInput,
+    loadingMessages,
+    handleRoomClick,
+    handleSendMessage,
+    handleCreateRoom,
+    handleJoinRoom,
+  } = useChatRoom();
 
-  const handleCreateRoom = (name: string, type: "public" | "private") => {
-    createRoom(name, type);
-  };
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const handleRoomClick = (room_id: string) => {
-    const foundRoom = rooms.find((r) => r.id === room_id);
-    if (!foundRoom) return;
+  useLayoutEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
 
-    setActiveRoomId(room_id);
-    const isMember =
-      foundRoom.members.some((u) => {
-        return u.id === currentUser?.id;
-      }) ?? false;
-    setIsMember(isMember);
-    setActiveRoom(foundRoom);
-    setAllUsers(foundRoom.members);
-  };
-  const handleJoinRoom = async (roomId: string) => {
-    try {
-      await joinRoom(roomId);
-      await reloadRooms();
-    } catch (err) {
-      console.error("Join room error:", err);
-    }
-  };
-
-  const currentUser = useSelector((state: RootState) => state.auth.user);
+    container.scrollTop = container.scrollHeight;
+  }, [messages, activeRoomId]); // ให้ scroll ทุกครั้งที่เปลี่ยนห้อง
 
   return (
     <>
       <div className="flex h-screen">
-        {/* Sidebar */}
-
         <aside className="w-20 bg-gray-900 text-white flex flex-col items-center py-4 space-y-4">
           <div className="mb-2">
             <button
@@ -81,7 +62,7 @@ export default function ChatLayout({
           <div className="flex-1 min-h-0 overflow-hidden group relative scroll-area">
             <div className="scroll-on-hover h-full overflow-y-auto group-hover:overflow-y-auto">
               <div className="min-h-[400px] flex flex-col items-center gap-4 py-4">
-                {loading ? (
+                {loadingRooms ? (
                   <div className="text-xs text-gray-400">Loading...</div>
                 ) : (
                   rooms.map((room) => (
@@ -103,24 +84,8 @@ export default function ChatLayout({
           </div>
         </aside>
 
-        {/* Main Panel */}
         <main className="flex-1 flex bg-gray-800">
-          {/* Friend / Room List */}
-          {/* <section className="w-64 bg-gray-850 border-r border-gray-700 text-white p-4 space-y-4">
-            <div className="font-semibold text-lg">Friends</div>
-            <div className="space-y-2 overflow-y-auto flex-1">
-              <div className="p-2 bg-gray-700 rounded hover:bg-gray-600">
-                User #1
-              </div>
-              <div className="p-2 bg-gray-700 rounded hover:bg-gray-600">
-                User #2
-              </div>
-            </div>
-          </section> */}
-
-          {/* Chat Window */}
           <section className="flex-1 flex flex-col text-white">
-            {/* Chat Header */}
             <div className="h-14 px-4 bg-gray-900 border-b border-gray-700 flex items-center">
               <h2 className="font-semibold">
                 {rooms.find((r) => r.id === activeRoomId)?.name ||
@@ -128,8 +93,11 @@ export default function ChatLayout({
               </h2>
             </div>
 
-            {/* Chat Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-2">
+            <div
+              key={activeRoomId}
+              ref={messagesContainerRef}
+              className="flex-1 overflow-y-auto p-4 space-y-2"
+            >
               {!activeRoom ? (
                 <div className="text-gray-400">No room selected</div>
               ) : !isMember ? (
@@ -142,27 +110,33 @@ export default function ChatLayout({
                     Join Room
                   </button>
                 </div>
-              ) : loading_message ? (
-                <div className="text-gray-400">Loading messages...</div>
+              ) : loadingMessages ? (
+                <Spinner />
               ) : messages.length ? (
-                messages.map((msg) => (
-                  <MessageBubble
-                    key={msg.id}
-                    message={msg}
-                    isOwnMessage={msg.sender_id === currentUser?.id}
-                    senderName={getUserNameById(allUsers, msg.sender_id)}
-                  />
-                ))
+                <>
+                  {messages.map((msg) => (
+                    <MessageBubble
+                      key={msg.id}
+                      message={msg}
+                      isOwnMessage={msg.sender_id === currentUser?.id}
+                      senderName={getUserNameById(allUsers, msg.sender_id)}
+                    />
+                  ))}
+                </>
               ) : (
                 <div className="text-gray-400">No messages</div>
               )}
             </div>
 
-            {/* Chat Input */}
             <div className="p-4 border-t border-gray-700">
               <input
                 type="text"
                 placeholder="Type a message..."
+                value={messageInput}
+                onChange={(e) => setMessageInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSendMessage();
+                }}
                 className="w-full p-2 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none"
               />
             </div>

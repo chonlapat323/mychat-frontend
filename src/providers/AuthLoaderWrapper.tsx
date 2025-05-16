@@ -1,7 +1,7 @@
 "use client";
 
 import Spinner from "@/components/ui/Spinner";
-import { useAuthLoad } from "@/hook/useAuthLoad";
+import { useAuthLoad } from "@/hooks/useAuthLoad";
 
 export default function AuthLoaderWrapper({
   children,

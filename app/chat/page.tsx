@@ -1,12 +1,12 @@
 "use client";
 
 import { logoutRequest } from "@/services/auth.service";
-import { useAuthLoad } from "@/hook/useAuthLoad";
+import { useAuthLoad } from "@/hooks/useAuthLoad";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { clearUser } from "@/store/authSlice";
 import { useRouter } from "next/navigation";
-import { useAppDispatch } from "@/hook/useAppDispatch";
+import { useAppDispatch } from "@/hooks/useAppDispatch";
 
 export default function Chat() {
   useAuthLoad();

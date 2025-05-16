@@ -1,19 +1,16 @@
 "use client";
 
 import { FormProvider, useForm } from "react-hook-form";
-import Checkbox from "@/components/form/input/Checkbox";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import { EyeCloseIcon, EyeIcon } from "../icons";
 import Link from "next/link";
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useRegister } from "@/hook/api/auth/useRegister";
+import { useRegister } from "@/hooks/api/auth/useRegister";
 import { RegisterForm } from "@/types/auth/register-playload";
 import AvatarSelector from "../form/AvatarSelector";
 
 export default function SignForm() {
-  const router = useRouter();
   const { handleRegister, loading, error } = useRegister();
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordAgain, setShowPasswordAgain] = useState(false);

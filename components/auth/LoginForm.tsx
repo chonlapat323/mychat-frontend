@@ -7,12 +7,12 @@ import { EyeCloseIcon, EyeIcon } from "../icons";
 import Link from "next/link";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useLogin } from "@/hook/api/auth/useLogin";
+import { useLogin } from "@/hooks/api/auth/useLogin";
 import { LoginPayload } from "@/types/auth/login-payload";
 
 export default function LoginForm() {
   const router = useRouter();
-  const { handleLogin, loading, error } = useLogin();
+  const { handleLogin, loading } = useLogin();
   const [showPassword, setShowPassword] = useState(false);
 
   const {
