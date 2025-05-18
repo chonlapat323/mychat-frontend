@@ -6,7 +6,7 @@ export function useWebSocket(onMessage: (data: WebSocketMessage) => void) {
   const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    const socket = new WebSocket(`ws://${WS_API_URL}/ws`);
+    const socket = new WebSocket(`wss://${WS_API_URL}/ws`);
     socketRef.current = socket;
 
     socket.onopen = () => {
