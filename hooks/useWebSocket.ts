@@ -1,11 +1,12 @@
 import { WebSocketMessage } from "@/contexts/WebSocketContext";
+import { WS_API_URL } from "@/libs/config";
 import { useEffect, useRef } from "react";
 
 export function useWebSocket(onMessage: (data: WebSocketMessage) => void) {
   const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    const socket = new WebSocket("ws://localhost:4001/ws");
+    const socket = new WebSocket(`ws://${WS_API_URL}/ws`);
     socketRef.current = socket;
 
     socket.onopen = () => {

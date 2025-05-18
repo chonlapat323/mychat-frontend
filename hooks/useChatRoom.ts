@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useMessages } from "@/hooks/useMessages";
 import { useRooms } from "@/hooks/useRooms";
 import { useCreateRoom } from "@/hooks/useCreateRoom";
@@ -24,6 +24,21 @@ export const useChatRoom = () => {
   );
   const { rooms, reloadRooms, loading } = useRooms();
   const currentUser = useSelector((state: RootState) => state.auth.user);
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+
+  useLayoutEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    container.scrollTop = container.scrollHeight;
+  }, [messages, activeRoomId]); // ให้ scroll ทุกครั้งที่เปลี่ยนห้อง
+
+  const scrollToBottom = () => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    container.scrollTop = container.scrollHeight;
+  };
 
   const { sendMessage } = useWebSocket((msg) => {
     if (msg.type === "message") {
@@ -40,9 +55,14 @@ export const useChatRoom = () => {
   });
 
   useEffect(() => {
-    if (initialMessages.length) {
-      setMessages(initialMessages);
-    }
+    // เคลียร์หรืออัปเดตเฉพาะเมื่อค่าจริงๆ เปลี่ยน
+    setMessages((prev) => {
+      const isDifferent =
+        prev.length !== initialMessages.length ||
+        prev.some((msg, i) => msg.id !== initialMessages[i]?.id);
+
+      return isDifferent ? initialMessages : prev;
+    });
   }, [initialMessages]);
 
   const {
@@ -72,7 +92,23 @@ export const useChatRoom = () => {
   const handleJoinRoom = async (roomId: string) => {
     try {
       await joinRoom(roomId);
-      await reloadRooms();
+      const updatedRooms = await reloadRooms();
+
+      // ✅ ใช้ updatedRooms แทน rooms เดิม
+      const foundRoom = updatedRooms.find(
+        (r: { id: string }) => r.id === roomId
+      );
+      if (foundRoom) {
+        const isNowMember = foundRoom.members.some(
+          (m: { id: string | undefined }) => m.id === currentUser?.id
+        );
+        setIsMember(isNowMember);
+        setActiveRoom(foundRoom);
+        setAllUsers(foundRoom.members);
+        setTimeout(() => {
+          scrollToBottom();
+        }, 100);
+      }
     } catch (err) {
       console.error("Join room error:", err);
     }
@@ -115,5 +151,6 @@ export const useChatRoom = () => {
     handleSendMessage,
     handleCreateRoom,
     handleJoinRoom,
+    messagesContainerRef,
   };
 };

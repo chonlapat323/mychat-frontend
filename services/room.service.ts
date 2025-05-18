@@ -1,5 +1,5 @@
 import { fetchWithAuth } from "@/libs/fetchWithAuth";
-import { API_URL } from "@/libs/config";
+import { ROOM_API_URL } from "@/libs/config";
 import { User } from "@/types/user";
 
 export type Room = {
@@ -10,11 +10,11 @@ export type Room = {
 export type RoomType = "public" | "private";
 
 export function fetchRooms(): Promise<Room[]> {
-  return fetchWithAuth<Room[]>(`${API_URL}/rooms`);
+  return fetchWithAuth<Room[]>(`${ROOM_API_URL}/rooms`);
 }
 
 export function createRoom(name: string, type: RoomType): Promise<Room> {
-  return fetchWithAuth<Room>(`${API_URL}/rooms`, {
+  return fetchWithAuth<Room>(`${ROOM_API_URL}/rooms`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -25,7 +25,7 @@ export function createRoom(name: string, type: RoomType): Promise<Room> {
 }
 
 export function joinRoom(roomId: string): Promise<void> {
-  return fetchWithAuth<void>(`${API_URL}/rooms/${roomId}/join`, {
+  return fetchWithAuth<void>(`${ROOM_API_URL}/rooms/${roomId}/join`, {
     method: "POST",
   });
 }

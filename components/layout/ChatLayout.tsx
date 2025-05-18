@@ -7,9 +7,7 @@ import MessageBubble from "../chat/MessageBubble";
 import { getUserNameById } from "@/utils/user";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { useRef } from "react";
 import Spinner from "../ui/Spinner";
-import { useLayoutEffect } from "react";
 
 export default function ChatLayout({
   children,
@@ -35,16 +33,8 @@ export default function ChatLayout({
     handleSendMessage,
     handleCreateRoom,
     handleJoinRoom,
+    messagesContainerRef,
   } = useChatRoom();
-
-  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-
-  useLayoutEffect(() => {
-    const container = messagesContainerRef.current;
-    if (!container) return;
-
-    container.scrollTop = container.scrollHeight;
-  }, [messages, activeRoomId]); // ให้ scroll ทุกครั้งที่เปลี่ยนห้อง
 
   return (
     <>
