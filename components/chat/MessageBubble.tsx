@@ -1,5 +1,6 @@
 import { Message } from "@/types/message";
 import clsx from "clsx";
+import { useState } from "react";
 
 type Props = {
   message: Message;
@@ -14,6 +15,7 @@ export default function MessageBubble({
   senderName,
   senderImageUrl,
 }: Props) {
+  const [imageLoaded, setImageLoaded] = useState(false);
   return (
     <div
       className={clsx("flex mb-2 items-start gap-2", {
@@ -22,11 +24,20 @@ export default function MessageBubble({
       })}
     >
       {!isOwnMessage && senderImageUrl && (
-        <img
-          src={senderImageUrl}
-          alt={senderName}
-          className="w-8 h-8 rounded-full object-cover"
-        />
+        <div className="relative w-8 h-8">
+          {!imageLoaded && (
+            <div className="absolute inset-0 rounded-full bg-gray-500 animate-pulse" />
+          )}
+          <img
+            src={senderImageUrl}
+            alt={senderName}
+            className={clsx(
+              "w-8 h-8 rounded-full object-cover transition-opacity duration-300",
+              imageLoaded ? "opacity-100" : "opacity-0"
+            )}
+            onLoad={() => setImageLoaded(true)}
+          />
+        </div>
       )}
 
       <div
