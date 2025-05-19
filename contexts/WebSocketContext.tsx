@@ -14,6 +14,14 @@ export type WebSocketMessage =
       sender: SafeUser;
     }
   | {
+      type: "user_joined";
+      payload: {
+        id: string;
+        email: string;
+        image_url: string;
+      };
+    }
+  | {
       type: "system";
       message: string;
     };

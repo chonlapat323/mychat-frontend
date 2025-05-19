@@ -42,6 +42,13 @@ export const useChatRoom = () => {
   };
 
   const { sendMessage } = useWebSocket((msg) => {
+    if (msg.type === "user_joined") {
+      const newUser = msg.payload;
+      setAllUsers((prev) => {
+        const exists = prev.some((u) => u.id === newUser.id);
+        return exists ? prev : [...prev, newUser];
+      });
+    }
     if (msg.type === "message") {
       setMessages((prev) => [
         ...prev,
