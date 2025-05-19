@@ -1,12 +1,17 @@
 import { WebSocketMessage } from "@/contexts/WebSocketContext";
 import { WS_API_URL } from "@/libs/config";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 
 export function useWebSocket(onMessage: (data: WebSocketMessage) => void) {
   const socketRef = useRef<WebSocket | null>(null);
-
+  const pathname = usePathname();
   useEffect(() => {
-    const socket = new WebSocket(`wss://${WS_API_URL}/ws`);
+    const publicPages = ["/signin", "/signup"];
+    if (publicPages.includes(pathname)) {
+      return;
+    }
+    const socket = new WebSocket(`${WS_API_URL}`);
     socketRef.current = socket;
 
     socket.onopen = () => {

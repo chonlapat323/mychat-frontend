@@ -4,7 +4,7 @@ import React, { createContext, useContext, useEffect, useRef } from "react";
 
 export type WebSocketMessage =
   | {
-      type: "message";
+      type: "message" | "join";
       id?: string;
       room_id: string;
       sender_id: string;
@@ -33,7 +33,7 @@ export const WebSocketProvider: React.FC<{
   const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    const socket = new WebSocket(`wss://${WS_API_URL}/ws`);
+    const socket = new WebSocket(`${WS_API_URL}`);
     socketRef.current = socket;
 
     socket.onopen = () => {

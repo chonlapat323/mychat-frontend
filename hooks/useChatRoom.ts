@@ -22,6 +22,7 @@ export const useChatRoom = () => {
   const { messages: initialMessages, loading: loadingMessages } = useMessages(
     activeRoomId!
   );
+
   const { rooms, reloadRooms, loading } = useRooms();
   const currentUser = useSelector((state: RootState) => state.auth.user);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
@@ -55,14 +56,19 @@ export const useChatRoom = () => {
   });
 
   useEffect(() => {
-    // เคลียร์หรืออัปเดตเฉพาะเมื่อค่าจริงๆ เปลี่ยน
-    setMessages((prev) => {
-      const isDifferent =
-        prev.length !== initialMessages.length ||
-        prev.some((msg, i) => msg.id !== initialMessages[i]?.id);
+    setMessages([]); // reset เมื่อเปลี่ยนห้อง
+  }, [activeRoomId]);
 
-      return isDifferent ? initialMessages : prev;
-    });
+  useEffect(() => {
+    if (initialMessages.length > 0) {
+      setMessages((prev) => {
+        const isDifferent =
+          prev.length !== initialMessages.length ||
+          prev.some((msg, i) => msg.id !== initialMessages[i]?.id);
+
+        return isDifferent ? initialMessages : prev;
+      });
+    }
   }, [initialMessages]);
 
   const {
@@ -84,6 +90,12 @@ export const useChatRoom = () => {
 
     setActiveRoomId(roomId);
     const isMember = foundRoom.members.some((u) => u.id === currentUser?.id);
+    if (isMember) {
+      sendMessage({
+        type: "join",
+        room_id: roomId,
+      } as WebSocketMessage);
+    }
     setIsMember(isMember);
     setActiveRoom(foundRoom);
     setAllUsers(foundRoom.members);
@@ -105,6 +117,12 @@ export const useChatRoom = () => {
         setIsMember(isNowMember);
         setActiveRoom(foundRoom);
         setAllUsers(foundRoom.members);
+
+        sendMessage({
+          type: "join",
+          room_id: roomId,
+        } as WebSocketMessage);
+
         setTimeout(() => {
           scrollToBottom();
         }, 100);

@@ -9,8 +9,10 @@ import React, { useState } from "react";
 import { useRegister } from "@/hooks/api/auth/useRegister";
 import { RegisterForm } from "@/types/auth/register-playload";
 import AvatarSelector from "../form/AvatarSelector";
+import { useRouter } from "next/navigation";
 
 export default function SignForm() {
+  const router = useRouter();
   const { handleRegister, loading, error } = useRegister();
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordAgain, setShowPasswordAgain] = useState(false);
@@ -32,7 +34,7 @@ export default function SignForm() {
     try {
       const { confirm_password, ...payload } = data;
       await handleRegister(payload);
-      // router.push("/login");
+      router.push("/signin");
     } catch (err) {
       console.error("❌ Register failed", err);
     }

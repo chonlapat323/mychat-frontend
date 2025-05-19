@@ -86,7 +86,7 @@ export default function ChatLayout({
             <div
               key={activeRoomId}
               ref={messagesContainerRef}
-              className="flex-1 overflow-y-auto p-4 space-y-2"
+              className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col-reverse"
             >
               {!activeRoom ? (
                 <div className="text-gray-400">No room selected</div>
@@ -104,7 +104,7 @@ export default function ChatLayout({
                 <Spinner />
               ) : messages.length ? (
                 <>
-                  {messages.map((msg) => (
+                  {[...messages].reverse().map((msg) => (
                     <MessageBubble
                       key={msg.id}
                       message={msg}
