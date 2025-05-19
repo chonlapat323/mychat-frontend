@@ -48,8 +48,7 @@ export const useChatRoom = () => {
         const exists = prev.some((u) => u.id === newUser.id);
         return exists ? prev : [...prev, newUser];
       });
-    }
-    if (msg.type === "message") {
+    } else if (msg.type === "message") {
       setMessages((prev) => [
         ...prev,
         {
