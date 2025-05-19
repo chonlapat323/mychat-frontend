@@ -41,7 +41,12 @@ export const useChatRoom = () => {
     container.scrollTop = container.scrollHeight;
   };
 
+  useEffect(() => {
+    console.log("🧾 All users in room:", allUsers);
+  }, [allUsers]);
+
   const { sendMessage } = useWebSocket((msg) => {
+    debugger;
     if (msg.type === "user_joined") {
       const newUser = msg.payload;
       setAllUsers((prev) => {

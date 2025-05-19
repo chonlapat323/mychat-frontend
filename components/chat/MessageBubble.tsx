@@ -5,20 +5,30 @@ type Props = {
   message: Message;
   isOwnMessage: boolean;
   senderName: string;
+  senderImageUrl?: string;
 };
 
 export default function MessageBubble({
   message,
   isOwnMessage,
   senderName,
+  senderImageUrl,
 }: Props) {
   return (
     <div
-      className={clsx("flex mb-2", {
+      className={clsx("flex mb-2 items-start gap-2", {
         "justify-end": isOwnMessage,
         "justify-start": !isOwnMessage,
       })}
     >
+      {!isOwnMessage && senderImageUrl && (
+        <img
+          src={senderImageUrl}
+          alt={senderName}
+          className="w-8 h-8 rounded-full object-cover"
+        />
+      )}
+
       <div
         className={clsx(
           "max-w-xs p-2 rounded-lg text-sm",

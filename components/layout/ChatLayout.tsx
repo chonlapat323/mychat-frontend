@@ -4,7 +4,7 @@ import { useChatRoom } from "@/hooks/useChatRoom";
 import UserSection from "../chat/UserSection";
 import CreateRoomModal from "../modal/CreateRoomModal";
 import MessageBubble from "../chat/MessageBubble";
-import { getUserNameById } from "@/utils/user";
+import { getUserImageById, getUserNameById } from "@/utils/user";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import Spinner from "../ui/Spinner";
@@ -110,6 +110,7 @@ export default function ChatLayout({
                       message={msg}
                       isOwnMessage={msg.sender_id === currentUser?.id}
                       senderName={getUserNameById(allUsers, msg.sender_id)}
+                      senderImageUrl={getUserImageById(allUsers, msg.sender_id)}
                     />
                   ))}
                 </>
