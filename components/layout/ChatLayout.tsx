@@ -40,15 +40,17 @@ export default function ChatLayout({
     <>
       <div className="flex h-screen">
         <aside className="w-20 bg-gray-900 text-white flex flex-col items-center py-4 space-y-4">
-          <div className="mb-2">
-            <button
-              onClick={() => setShowModal(true)}
-              className="w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-white text-2xl font-bold"
-              title="Create new room"
-            >
-              +
-            </button>
-          </div>
+          {currentUser?.role === "admin" && (
+            <div className="mb-2">
+              <button
+                onClick={() => setShowModal(true)}
+                className="w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-white text-2xl font-bold"
+                title="Create new room"
+              >
+                +
+              </button>
+            </div>
+          )}
           <div className="flex-1 min-h-0 overflow-hidden group relative scroll-area">
             <div className="scroll-on-hover h-full overflow-y-auto group-hover:overflow-y-auto">
               <div className="min-h-[400px] flex flex-col items-center gap-4 py-4">
