@@ -19,6 +19,7 @@ export type WebSocketMessage =
         id: string;
         email: string;
         image_url: string;
+        role: string;
         created_at: string;
       };
     }
